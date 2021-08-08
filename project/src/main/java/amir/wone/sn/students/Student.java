@@ -2,12 +2,18 @@ package amir.wone.sn.students;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Table
 public class Student {
 
     @Id
+    @SequenceGenerator(
+            name = "student_sequence",
+            sequenceName = "student_sequence",
+            allocationSize = 1
+    )
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -15,26 +21,26 @@ public class Student {
     private String firstName;
     private String email;
     private LocalDate bob;
+
+    @Transient
     private int age;
 
     public Student() {
     }
 
-    public Student(String name, String firstName, String email, LocalDate bob, int age) {
-        this.name = name;
-        this.firstName = firstName;
-        this.email = email;
-        this.bob = bob;
-        this.age = age;
-    }
-
-    public Student(Long id, String name, String firstName, String email, LocalDate bob, int age) {
+    public Student(Long id, String name, String firstName, String email, LocalDate bob) {
         this.id = id;
         this.name = name;
         this.firstName = firstName;
         this.email = email;
         this.bob = bob;
-        this.age = age;
+    }
+
+    public Student(String name, String firstName, String email, LocalDate bob) {
+        this.name = name;
+        this.firstName = firstName;
+        this.email = email;
+        this.bob = bob;
     }
 
     public Long getId() {
@@ -78,7 +84,7 @@ public class Student {
     }
 
     public int getAge() {
-        return age;
+        return Period.between(this.bob, LocalDate.now()).getYears();
     }
 
     public void setAge(int age) {
@@ -96,4 +102,9 @@ public class Student {
                 ", age=" + age +
                 '}';
     }
+
+    public static int getAge(LocalDate dob){
+        return LocalDate.now().getYear() - dob.getYear();
+    }
+
 }
